@@ -1,0 +1,12 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Home", root_path %></li>
+    <% breadcrumbs.each_with_index do |crumb, index| %>
+      <% if index == breadcrumbs.length - 1 %>
+        <li class="breadcrumb-item active"><%= crumb[:name] %></li>
+      <% else %>
+        <li class="breadcrumb-item"><%= link_to crumb[:name], crumb[:path] %></li>
+      <% end %>
+    <% end %>
+  </ol>
+</nav>

@@ -1,0 +1,87 @@
+<section class="hero bg-primary text-white py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold">Amplify Your Journey</h1>
+        <p class="lead">Empowering individuals through storytelling, personal development, and resilience training since 2022.</p>
+        <div class="mt-4">
+          <%= link_to "Shop Products", products_path, class: "btn btn-light btn-lg me-3" %>
+          <%= link_to "Book Speaking", new_booking_path, class: "btn btn-outline-light btn-lg" %>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <%= image_tag 'm.jpg', alt: "Rise and Resound Speaking1", class: "img-fluid rounded" %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Featured Products</h2>
+    <div class="row">
+      <% @featured_products.each do |product| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <img src="https://via.placeholder.com/300x200/6c757d/ffffff?text=<%= product.name %>"
+                 class="card-img-top" alt="<%= product.name %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text"><%= truncate(product.description, length: 100) %></p>
+              <p class="text-muted">Category: <%= product.category.name %></p>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="h5 mb-0 text-primary">$<%= product.current_price %></span>
+                <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-center mt-4">
+      <%= link_to "View All Products", products_path, class: "btn btn-outline-primary btn-lg" %>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="bg-light py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Product Categories</h2>
+    <div class="row">
+      <% @categories.each do |category| %>
+        <div class="col-md-3 mb-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title"><%= category.name %></h5>
+              <p class="text-muted"><%= pluralize(category.products.count, 'product') %></p>
+              <%= link_to "Browse", products_path(category_id: category.id), class: "btn btn-primary" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <img src="images/m.jpg"
+             alt="About Rise and Resound" class="img-fluid rounded">
+      </div>
+      <div class="col-lg-6">
+        <h2>About Rise and Resound</h2>
+        <p class="lead">Founded in Winnipeg, Manitoba in 2022, Rise and Resound is a solo-run motivational brand with a mission to empower individuals through storytelling, personal development, and resilience training.</p>
+        <p>We've grown organically through speaking engagements at schools, community events, and youth development programs. Our online store offers digital motivational products, coaching sessions, and branded merchandise to extend our reach and impact.</p>
+        <%= link_to "Book a Speaking Engagement", new_booking_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+</section>

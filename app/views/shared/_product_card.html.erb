@@ -1,0 +1,53 @@
+<div class="col-lg-4 col-md-6 mb-4">
+  <div class="card h-100">
+    <% if product.image.attached? %>
+      <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+    <% elsif product.image_url.present? %>
+      <img src="<%= product.image_url %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="<%= product.name %>">
+    <% else %>
+      <img src="https://via.placeholder.com/300x200/6c757d/ffffff?text=<%= CGI.escape(product.name) %>"
+           class="card-img-top" alt="<%= product.name %>">
+    <% end %>
+
+    <div class="card-body">
+      <h5 class="card-title">
+        <%= product.name %>
+        <% if product.is_new? %>
+          <span class="badge bg-success">New</span>
+        <% end %>
+        <% if product.on_sale? %>
+          <span class="badge bg-warning">Sale</span>
+        <% end %>
+      </h5>
+      <p class="card-text"><%= truncate(product.description, length: 100) %></p>
+      <p class="text-muted small">Category: <%= product.category.name %></p>
+
+      <!-- Rating Display -->
+      <% if product.reviews.any? %>
+        <div class="mb-2">
+          <%= render 'shared/star_rating', rating: product.average_rating %>
+          <small class="text-muted">(<%= product.reviews.count %>)</small>
+        </div>
+      <% end %>
+
+      <% unless product.in_stock? %>
+        <span class="badge bg-danger">Out of Stock</span>
+      <% end %>
+    </div>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="h5 mb-0 text-primary">$<%= product.current_price %></span>
+        <div>
+          <%= link_to "View", product_path(product), class: "btn btn-outline-primary btn-sm" %>
+          <% if product.in_stock? %>
+            <%= form_with url: cart_add_path, method: :post, local: true, class: "d-inline" do |f| %>
+              <%= f.hidden_field :product_id, value: product.id %>
+              <%= f.hidden_field :quantity, value: 1 %>
+              <%= f.submit "Add to Cart", class: "btn btn-primary btn-sm" %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

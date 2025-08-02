@@ -1,0 +1,125 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Create Account</h4>
+          <small class="text-muted">Join Rise and Resound to save your address and track orders</small>
+        </div>
+        <div class="card-body">
+          <form action="/signup" method="post" data-turbo="false">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+
+            <!-- Account Information -->
+            <h5 class="mb-3">Account Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_name" class="form-label">Full Name</label>
+                  <input type="text" name="user[name]" id="user_name" class="form-control" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_email" class="form-label">Email Address</label>
+                  <input type="email" name="user[email]" id="user_email" class="form-control" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_password" class="form-label">Password</label>
+                  <input type="password" name="user[password]" id="user_password" class="form-control" required minlength="6">
+                  <div class="form-text">Must be at least 6 characters long.</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_password_confirmation" class="form-label">Confirm Password</label>
+                  <input type="password" name="user[password_confirmation]" id="user_password_confirmation" class="form-control" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Information (Optional) -->
+            <hr>
+            <h5 class="mb-3">Shipping Address <small class="text-muted">(Optional - can be added later)</small></h5>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_address_line_1" class="form-label">Address Line 1</label>
+                  <input type="text" name="user[address_line_1]" id="user_address_line_1" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_address_line_2" class="form-label">Address Line 2</label>
+                  <input type="text" name="user[address_line_2]" id="user_address_line_2" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="user_city" class="form-label">City</label>
+                  <input type="text" name="user[city]" id="user_city" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="user_province" class="form-label">Province</label>
+                  <select name="user[province]" id="user_province" class="form-select">
+                    <option value="">Select Province</option>
+                    <option value="AB">Alberta</option>
+                    <option value="BC">British Columbia</option>
+                    <option value="MB">Manitoba</option>
+                    <option value="NB">New Brunswick</option>
+                    <option value="NL">Newfoundland and Labrador</option>
+                    <option value="NS">Nova Scotia</option>
+                    <option value="ON">Ontario</option>
+                    <option value="PE">Prince Edward Island</option>
+                    <option value="QC">Quebec</option>
+                    <option value="SK">Saskatchewan</option>
+                    <option value="NT">Northwest Territories</option>
+                    <option value="NU">Nunavut</option>
+                    <option value="YT">Yukon</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="user_postal_code" class="form-label">Postal Code</label>
+                  <input type="text" name="user[postal_code]" id="user_postal_code" class="form-control"
+                         placeholder="A1A 1A1">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="user_phone" class="form-label">Phone Number (Optional)</label>
+                  <input type="tel" name="user[phone]" id="user_phone" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+            </div>
+          </form>
+
+          <hr>
+
+          <div class="text-center">
+            <p class="mb-0">Already have an account?</p>
+            <a href="/login" class="btn btn-outline-primary">Login here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

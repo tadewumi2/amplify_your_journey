@@ -1,0 +1,43 @@
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1>Contact Us</h1>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h3>Get in Touch</h3>
+          <p>We'd love to hear from you! Whether you're interested in booking a speaking engagement, have questions about our products, or just want to connect, don't hesitate to reach out.</p>
+
+          <div class="mb-3">
+            <h5>Location</h5>
+            <p>Winnipeg, Manitoba, Canada</p>
+          </div>
+
+          <div class="mb-3">
+            <h5>Email</h5>
+            <p><a href="mailto:tosin@riseandresound.com">tosin@riseandresound.com</a></p>
+          </div>
+
+          <div class="mb-3">
+            <h5>Speaking Inquiries</h5>
+            <p>For speaking engagements and workshops, please use our <%= link_to "booking form", new_booking_path %> to provide details about your event.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h3>Quick Links</h3>
+          <div class="list-group">
+            <%= link_to "Book Speaking Engagement", new_booking_path, class: "list-group-item list-group-item-action" %>
+            <%= link_to "Browse Products", products_path, class: "list-group-item list-group-item-action" %>
+            <%= link_to "About Rise and Resound", about_path, class: "list-group-item list-group-item-action" %>
+            <% if logged_in? %>
+              <%= link_to "My Orders", orders_path, class: "list-group-item list-group-item-action" %>
+            <% else %>
+              <%= link_to "Create Account", signup_path, class: "list-group-item list-group-item-action" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<% rating = rating.to_i %>
+<% rating.times do %>
+  <span class="text-warning">★</span>
+<% end %>
+<% (5 - rating).times do %>
+  <span class="text-muted">☆</span>
+<% end %>

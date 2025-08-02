@@ -1,0 +1,161 @@
+<div class="container py-4">
+  <h2>Checkout</h2>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Order Details</h5>
+        </div>
+        <div class="card-body">
+          <%= form_with model: @order, local: true, data: { turbo: false } do |f| %>
+            <!-- Customer Information -->
+            <div class="mb-4">
+              <h6>Customer Information</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-label">Name</label>
+                  <input type="text" class="form-control" value="<%= current_user.name %>" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" value="<%= current_user.email %>" readonly>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="mb-4">
+              <h6>Shipping Address</h6>
+              <% if current_user.address_line_1.present? %>
+                <div class="alert alert-info">
+                  <strong>Using saved address:</strong><br>
+                  <%= current_user.full_address %>
+                  <div class="mt-2">
+                    <%= link_to "Update Address", "#", class: "btn btn-sm btn-outline-primary",
+                                onclick: "document.getElementById('address-form').style.display='block'; this.style.display='none'; return false;" %>
+                  </div>
+                </div>
+              <% end %>
+
+              <div id="address-form" style="<%= 'display: none;' if current_user.address_line_1.present? %>">
+                <div class="row">
+                  <div class="col-md-6">
+                    <%= f.label :shipping_address_line_1, "Address Line 1", class: "form-label" %>
+                    <%= f.text_field :shipping_address_line_1, value: current_user.address_line_1,
+                                     class: "form-control", required: true %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= f.label :shipping_address_line_2, "Address Line 2 (Optional)", class: "form-label" %>
+                    <%= f.text_field :shipping_address_line_2, value: current_user.address_line_2,
+                                     class: "form-control" %>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-4">
+                    <%= f.label :shipping_city, "City", class: "form-label" %>
+                    <%= f.text_field :shipping_city, value: current_user.city,
+                                     class: "form-control", required: true %>
+                  </div>
+                  <div class="col-md-4">
+                    <%= f.label :shipping_province, "Province", class: "form-label" %>
+                    <%= f.select :shipping_province,
+                                 options_for_select(User::CANADIAN_PROVINCES.map {|k,v| [v,k]}, current_user.province),
+                                 { prompt: "Select Province" },
+                                 { class: "form-select", required: true } %>
+                  </div>
+                  <div class="col-md-4">
+                    <%= f.label :shipping_postal_code, "Postal Code", class: "form-label" %>
+                    <%= f.text_field :shipping_postal_code, value: current_user.postal_code,
+                                     class: "form-control", required: true %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="mb-4">
+              <h6>Payment Information</h6>
+              <div class="alert alert-info">
+                <strong>Demo Mode:</strong> This is a demonstration checkout. No actual payment will be processed.
+                <br><small>In production, this would integrate with Stripe or PayPal.</small>
+              </div>
+
+              <!-- Demo Credit Card Form -->
+              <div class="row">
+                <div class="col-md-8">
+                  <label class="form-label">Card Number</label>
+                  <input type="text" class="form-control" placeholder="4111 1111 1111 1111" readonly>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">CVV</label>
+                  <input type="text" class="form-control" placeholder="123" readonly>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <label class="form-label">Expiry Month</label>
+                  <select class="form-select" disabled>
+                    <option>12</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Expiry Year</label>
+                  <select class="form-select" disabled>
+                    <option>2025</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <%= link_to "Back to Cart", cart_path, class: "btn btn-outline-secondary" %>
+              <%= f.submit "Place Order", class: "btn btn-success btn-lg" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Order Summary</h5>
+        </div>
+        <div class="card-body">
+          <% subtotal = 0 %>
+          <% current_cart.each do |product_id, quantity| %>
+            <% product = Product.find(product_id) %>
+            <% item_total = quantity * product.current_price %>
+            <% subtotal += item_total %>
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div class="fw-bold"><%= product.name %></div>
+                <small class="text-muted">Qty: <%= quantity %> × $<%= product.current_price %></small>
+              </div>
+              <span>$<%= item_total %></span>
+            </div>
+          <% end %>
+          <hr>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <span>$<%= subtotal %></span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Tax (13%):</span>
+            <span>$<%= (subtotal * 0.13).round(2) %></span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Shipping:</span>
+            <span>Free</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <strong>Total:</strong>
+            <strong class="text-primary">$<%= (subtotal * 1.13).round(2) %></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

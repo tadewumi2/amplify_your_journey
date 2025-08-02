@@ -1,0 +1,134 @@
+<div class="container py-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Home", root_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Products", products_path %></li>
+      <li class="breadcrumb-item"><%= link_to @product.category.name, products_path(category_id: @product.category.id) %></li>
+      <li class="breadcrumb-item active"><%= @product.name %></li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-md-6">
+      <img src="https://via.placeholder.com/500x400/6c757d/ffffff?text=<%= @product.name %>"
+           class="img-fluid rounded" alt="<%= @product.name %>">
+    </div>
+
+    <div class="col-md-6">
+      <h1><%= @product.name %></h1>
+      <p class="text-muted">Category: <%= @product.category.name %></p>
+
+      <div class="mb-3">
+        <span class="h3 text-primary">$<%= @product.current_price %></span>
+      </div>
+
+      <div class="mb-3">
+        <% if @product.in_stock? %>
+          <span class="badge bg-success">In Stock (<%= @product.stock_quantity %> available)</span>
+        <% else %>
+          <span class="badge bg-danger">Out of Stock</span>
+        <% end %>
+      </div>
+
+      <div class="mb-4">
+        <h5>Description</h5>
+        <p><%= simple_format(@product.description) %></p>
+      </div>
+
+      <% if @product.in_stock? %>
+        <%= form_with url: cart_add_path, method: :post, local: true, class: "mb-4" do |f| %>
+          <%= f.hidden_field :product_id, value: @product.id %>
+          <div class="row">
+            <div class="col-md-3">
+              <%= f.number_field :quantity, value: 1, min: 1, max: @product.stock_quantity,
+                                 class: "form-control" %>
+            </div>
+            <div class="col-md-6">
+              <%= f.submit "Add to Cart", class: "btn btn-primary btn-lg w-100" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <!-- Reviews Summary -->
+      <% if @product.reviews.any? %>
+        <div class="mb-3">
+          <h6>Customer Reviews</h6>
+          <% avg_rating = @product.reviews.average(:rating).to_f %>
+          <div class="d-flex align-items-center">
+            <div class="me-2">
+              <% 5.times do |i| %>
+                <% if i < avg_rating %>
+                  <span class="text-warning">★</span>
+                <% else %>
+                  <span class="text-muted">☆</span>
+                <% end %>
+              <% end %>
+            </div>
+            <span>(<%= pluralize(@product.reviews.count, 'review') %>)</span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Product Reviews -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <h3>Customer Reviews</h3>
+
+      <!-- Add Review Form -->
+      <% if logged_in? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Write a Review</h5>
+          </div>
+          <div class="card-body">
+            <%= form_with model: [@product, @review], local: true do |f| %>
+              <div class="mb-3">
+                <%= f.label :rating, class: "form-label" %>
+                <%= f.select :rating, options_for_select([[5, "5 - Excellent"], [4, "4 - Good"], [3, "3 - Average"], [2, "2 - Poor"], [1, "1 - Terrible"]]),
+                             { prompt: "Select rating" }, { class: "form-select" } %>
+              </div>
+              <div class="mb-3">
+                <%= f.label :comment, class: "form-label" %>
+                <%= f.text_area :comment, rows: 4, class: "form-control" %>
+              </div>
+              <%= f.submit "Submit Review", class: "btn btn-primary" %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <p class="text-muted mb-4">
+          <%= link_to "Login", login_path %> to write a review.
+        </p>
+      <% end %>
+
+      <!-- Existing Reviews -->
+      <% if @product.reviews.any? %>
+        <% @product.reviews.order(created_at: :desc).each do |review| %>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h6><%= review.user.name %></h6>
+                <small class="text-muted"><%= review.created_at.strftime("%B %d, %Y") %></small>
+              </div>
+              <div class="mb-2">
+                <% review.rating.times do %>
+                  <span class="text-warning">★</span>
+                <% end %>
+                <% (5 - review.rating).times do %>
+                  <span class="text-muted">☆</span>
+                <% end %>
+              </div>
+              <p><%= simple_format(review.comment) %></p>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<% if total_pages > 1 %>
+  <nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+      <% if current_page > 1 %>
+        <li class="page-item">
+          <%= link_to "Previous", url_for(page: current_page - 1), class: "page-link" %>
+        </li>
+      <% end %>
+
+      <% (1..total_pages).each do |page_num| %>
+        <li class="page-item <%= 'active' if page_num == current_page %>">
+          <% if page_num == current_page %>
+            <span class="page-link"><%= page_num %></span>
+          <% else %>
+            <%= link_to page_num, url_for(page: page_num), class: "page-link" %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if current_page < total_pages %>
+        <li class="page-item">
+          <%= link_to "Next", url_for(page: current_page + 1), class: "page-link" %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+<% end %>

@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Content Management</h2>
+  <small class="text-muted">Edit website pages</small>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">About Page</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: admin_content_about_path, method: :patch, local: true do |f| %>
+          <div class="mb-3">
+            <%= f.label 'content[title]', "Page Title", class: "form-label" %>
+            <%= f.text_field 'content[title]', value: @about_content[:title], class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label 'content[content]', "Page Content", class: "form-label" %>
+            <%= f.text_area 'content[content]', value: @about_content[:content], rows: 8, class: "form-control" %>
+          </div>
+          <%= f.submit "Update About Page", class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Contact Page</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: admin_content_contact_path, method: :patch, local: true do |f| %>
+          <div class="mb-3">
+            <%= f.label 'content[title]', "Page Title", class: "form-label" %>
+            <%= f.text_field 'content[title]', value: @contact_content[:title], class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label 'content[email]', "Email", class: "form-label" %>
+            <%= f.email_field 'content[email]', value: @contact_content[:email], class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label 'content[address]', "Address", class: "form-label" %>
+            <%= f.text_field 'content[address]', value: @contact_content[:address], class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label 'content[phone]', "Phone", class: "form-label" %>
+            <%= f.text_field 'content[phone]', value: @contact_content[:phone], class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label 'content[hours]', "Business Hours", class: "form-label" %>
+            <%= f.text_field 'content[hours]', value: @contact_content[:hours], class: "form-control" %>
+          </div>
+          <%= f.submit "Update Contact Page", class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

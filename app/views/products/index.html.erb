@@ -1,0 +1,186 @@
+<div class="container py-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Home", root_path %></li>
+      <% if @current_category %>
+        <li class="breadcrumb-item">Products</li>
+        <li class="breadcrumb-item active"><%= @current_category.name %></li>
+      <% else %>
+        <li class="breadcrumb-item active">Products</li>
+      <% end %>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-header">
+          <h5>Search & Filter</h5>
+        </div>
+        <div class="card-body">
+          <!-- Search Form -->
+          <%= form_with url: products_path, method: :get, local: true, class: "mb-3" do |f| %>
+            <div class="mb-3">
+              <%= f.text_field :search, placeholder: "Search products...",
+                               value: params[:search], class: "form-control" %>
+            </div>
+            <%= f.hidden_field :category_id, value: params[:category_id] %>
+            <%= f.hidden_field :filter, value: params[:filter] %>
+            <%= f.submit "Search", class: "btn btn-primary btn-sm w-100" %>
+          <% end %>
+
+          <hr>
+
+          <!-- Filter Options -->
+          <h6>Filter Products</h6>
+          <div class="mb-3">
+            <%= link_to "All Products", products_path(category_id: params[:category_id], search: params[:search]),
+                        class: "btn btn-outline-secondary btn-sm w-100 mb-1 #{'active' unless params[:filter].present?}" %>
+            <%= link_to "On Sale", products_path(filter: 'on_sale', category_id: params[:category_id], search: params[:search]),
+                        class: "btn btn-outline-warning btn-sm w-100 mb-1 #{'active' if params[:filter] == 'on_sale'}" %>
+            <%= link_to "New Products", products_path(filter: 'new', category_id: params[:category_id], search: params[:search]),
+                        class: "btn btn-outline-success btn-sm w-100 mb-1 #{'active' if params[:filter] == 'new'}" %>
+            <%= link_to "Recently Updated", products_path(filter: 'recently_updated', category_id: params[:category_id], search: params[:search]),
+                        class: "btn btn-outline-info btn-sm w-100 mb-1 #{'active' if params[:filter] == 'recently_updated'}" %>
+          </div>
+
+          <hr>
+
+          <!-- Categories -->
+          <h6>Categories</h6>
+          <ul class="list-unstyled">
+            <li class="mb-1">
+              <%= link_to "All Categories", products_path(search: params[:search], filter: params[:filter]),
+                          class: "text-decoration-none #{'fw-bold' unless params[:category_id].present?}" %>
+            </li>
+            <% @categories.each do |category| %>
+              <li class="mb-1">
+                <%= link_to category.name, products_path(category_id: category.id, search: params[:search], filter: params[:filter]),
+                            class: "text-decoration-none #{'fw-bold' if params[:category_id] == category.id.to_s}" %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+          <% if @current_category %>
+            <%= @current_category.name %>
+          <% elsif params[:filter].present? %>
+            <%= params[:filter].humanize %> Products
+          <% else %>
+            All Products
+          <% end %>
+          <small class="text-muted">(<%= @total_products %> total)</small>
+        </h2>
+      </div>
+
+      <% if @products.any? %>
+        <div class="row">
+          <% @products.each do |product| %>
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <% if product.image.attached? %>
+                  <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+                <% else %>
+                  <img src="https://via.placeholder.com/300x200/6c757d/ffffff?text=<%= CGI.escape(product.name) %>"
+                       class="card-img-top" alt="<%= product.name %>">
+                <% end %>
+
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= product.name %>
+                    <% if product.is_new? %>
+                      <span class="badge bg-success">New</span>
+                    <% end %>
+                    <% if product.on_sale? %>
+                      <span class="badge bg-warning">Sale</span>
+                    <% end %>
+                  </h5>
+                  <p class="card-text"><%= truncate(product.description, length: 100) %></p>
+                  <p class="text-muted small">Category: <%= product.category.name %></p>
+
+                  <!-- Rating Display -->
+                  <% if product.reviews.any? %>
+                    <div class="mb-2">
+                      <% product.average_rating.to_i.times do %>
+                        <span class="text-warning">★</span>
+                      <% end %>
+                      <% (5 - product.average_rating.to_i).times do %>
+                        <span class="text-muted">☆</span>
+                      <% end %>
+                      <small class="text-muted">(<%= product.reviews.count %>)</small>
+                    </div>
+                  <% end %>
+
+                  <% unless product.in_stock? %>
+                    <span class="badge bg-danger">Out of Stock</span>
+                  <% end %>
+                </div>
+                <div class="card-footer">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="h5 mb-0 text-primary">$<%= product.current_price %></span>
+                    <div>
+                      <%= link_to "View", product_path(product), class: "btn btn-outline-primary btn-sm" %>
+                      <% if product.in_stock? %>
+                        <%= form_with url: cart_add_path, method: :post, local: true, class: "d-inline" do |f| %>
+                          <%= f.hidden_field :product_id, value: product.id %>
+                          <%= f.hidden_field :quantity, value: 1 %>
+                          <%= f.submit "Add to Cart", class: "btn btn-primary btn-sm" %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Pagination -->
+        <% if @total_pages > 1 %>
+          <nav aria-label="Product pagination">
+            <ul class="pagination justify-content-center">
+              <% if @page > 1 %>
+                <li class="page-item">
+                  <%= link_to "Previous", products_path(page: @page - 1, category_id: params[:category_id], search: params[:search], filter: params[:filter]),
+                              class: "page-link" %>
+                </li>
+              <% end %>
+
+              <% (1..@total_pages).each do |page_num| %>
+                <li class="page-item <%= 'active' if page_num == @page %>">
+                  <% if page_num == @page %>
+                    <span class="page-link"><%= page_num %></span>
+                  <% else %>
+                    <%= link_to page_num, products_path(page: page_num, category_id: params[:category_id], search: params[:search], filter: params[:filter]),
+                                class: "page-link" %>
+                  <% end %>
+                </li>
+              <% end %>
+
+              <% if @page < @total_pages %>
+                <li class="page-item">
+                  <%= link_to "Next", products_path(page: @page + 1, category_id: params[:category_id], search: params[:search], filter: params[:filter]),
+                              class: "page-link" %>
+                </li>
+              <% end %>
+            </ul>
+          </nav>
+        <% end %>
+      <% else %>
+        <div class="text-center py-5">
+          <h4>No products found</h4>
+          <p class="text-muted">Try adjusting your search or browse different categories.</p>
+          <%= link_to "View All Products", products_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

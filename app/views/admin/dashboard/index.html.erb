@@ -1,0 +1,147 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Admin Dashboard</h2>
+  <small class="text-muted">Welcome back, <%= current_user.name %>!</small>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h4><%= @total_products %></h4>
+            <p class="mb-0">Total Products</p>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-box fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h4><%= @total_orders %></h4>
+            <p class="mb-0">Total Orders</p>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-shopping-cart fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card bg-info text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h4><%= @total_users %></h4>
+            <p class="mb-0">Registered Users</p>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-users fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card bg-warning text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h4><%= @pending_orders %></h4>
+            <p class="mb-0">Pending Orders</p>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-clock fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Recent Orders -->
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Recent Orders</h5>
+      </div>
+      <div class="card-body">
+        <% if @recent_orders.any? %>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_orders.each do |order| %>
+                  <tr>
+                    <td><%= link_to "##{order.id}", admin_order_path(order) %></td>
+                    <td><%= order.user.name %></td>
+                    <td><%= pluralize(order.order_items.count, 'item') %></td>
+                    <td>$<%= order.total_price %></td>
+                    <td>
+                      <span class="badge bg-<%= order.status == 'pending' ? 'warning' : 'success' %>">
+                        <%= order.status.titleize %>
+                      </span>
+                    </td>
+                    <td><%= order.created_at.strftime("%m/%d/%Y") %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="text-muted">No orders yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Bookings -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Recent Speaking Requests</h5>
+      </div>
+      <div class="card-body">
+        <% if @recent_bookings.any? %>
+          <% @recent_bookings.each do |booking| %>
+            <div class="mb-3 pb-2 border-bottom">
+              <div class="fw-bold"><%= booking.name %></div>
+              <div class="text-muted small">
+                <%= booking.event_type.humanize %> - <%= booking.organization %>
+              </div>
+              <div class="text-muted small">
+                <%= booking.preferred_date.strftime("%B %d, %Y") %>
+              </div>
+            </div>
+          <% end %>
+          <div class="text-center">
+            <%= link_to "View All", admin_bookings_path, class: "btn btn-outline-primary btn-sm" %>
+          </div>
+        <% else %>
+          <p class="text-muted">No speaking requests yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
