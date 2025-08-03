@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><%= @user.name %></h2>
+  <%= link_to "Back to Users", admin_users_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5>User Details</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-borderless">
+          <tr>
+            <td><strong>Name:</strong></td>
+            <td><%= @user.name %></td>
+          </tr>
+          <tr>
+            <td><strong>Email:</strong></td>
+            <td><%= @user.email %></td>
+          </tr>
+          <tr>
+            <td><strong>Admin:</strong></td>
+            <td><%= @user.admin? ? "Yes" : "No" %></td>
+          </tr>
+          <tr>
+            <td><strong>Total Orders:</strong></td>
+            <td><%= pluralize(@user.orders.count, 'order') %></td>
+          </tr>
+          <tr>
+            <td><strong>Joined:</strong></td>
+            <td><%= @user.created_at.strftime("%B %d, %Y") %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5>Recent Orders</h5>
+      </div>
+      <div class="card-body">
+        <% if @user.orders.any? %>
+          <% @user.orders.order(created_at: :desc).limit(5).each do |order| %>
+            <div class="mb-2 p-2 border rounded">
+              <div class="d-flex justify-content-between">
+                <strong>Order #<%= order.id %></strong>
+                <span class="badge bg-<%= order.status == 'pending' ? 'warning' : 'success' %>">
+                  <%= order.status.titleize %>
+                </span>
+              </div>
+              <small class="text-muted">
+                <%= order.created_at.strftime("%B %d, %Y") %> - $<%= order.total_price %>
+              </small>
+              <div class="mt-1">
+                <%= link_to "View Order", admin_order_path(order), class: "btn btn-xs btn-outline-primary" %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No orders yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

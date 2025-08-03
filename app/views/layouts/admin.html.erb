@@ -14,7 +14,6 @@
   </head>
 
   <body>
-    <!-- Admin Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <%= link_to "Admin Dashboard", admin_root_path, class: "navbar-brand" %>
@@ -23,34 +22,33 @@
           <%= link_to "Products", admin_products_path, class: "nav-link" %>
           <%= link_to "Categories", admin_categories_path, class: "nav-link" %>
           <%= link_to "Orders", admin_orders_path, class: "nav-link" %>
+          <%= link_to "Content", admin_content_path, class: "nav-link" %>
           <%= link_to "Users", admin_users_path, class: "nav-link" %>
           <%= link_to "Bookings", admin_bookings_path, class: "nav-link" %>
         </div>
 
         <div class="navbar-nav">
           <%= link_to "View Site", root_path, class: "nav-link", target: "_blank" %>
-          <%= link_to "Logout", logout_path, method: :delete, class: "nav-link" %>
+          <%= link_to "Logout", logout_path, class: "nav-link", data: { turbo: false } %>
         </div>
       </div>
     </nav>
 
-    <!-- Flash Messages -->
-    <% if flash[:notice] %>
-      <div class="alert alert-success alert-dismissible fade show m-0" role="alert">
-        <%= flash[:notice] %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <% end %>
-
-    <% if flash[:alert] %>
-      <div class="alert alert-danger alert-dismissible fade show m-0" role="alert">
-        <%= flash[:alert] %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <% end %>
-
-    <!-- Main Content -->
     <main class="container-fluid py-4">
+      <% if flash[:notice] %>
+        <div class="alert alert-success alert-dismissible fade show">
+          <%= flash[:notice] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <% if flash[:alert] %>
+        <div class="alert alert-danger alert-dismissible fade show">
+          <%= flash[:alert] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
       <%= yield %>
     </main>
   </body>

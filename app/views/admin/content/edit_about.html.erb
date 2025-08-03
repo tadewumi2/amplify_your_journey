@@ -1,0 +1,26 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Edit About Page</h2>
+  <%= link_to "Preview", about_path, class: "btn btn-outline-info", target: "_blank" %>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <%= form_with url: admin_content_update_about_path, method: :patch, local: true, data: { turbo: false } do |f| %>
+      <div class="mb-3">
+        <%= label_tag :title, "Page Title", class: "form-label" %>
+        <%= text_field_tag :title, @content.title, class: "form-control", required: true %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag :content, "Page Content", class: "form-label" %>
+        <%= text_area_tag :content, @content.content, rows: 12, class: "form-control", required: true %>
+        <div class="form-text">You can use line breaks to separate paragraphs.</div>
+      </div>
+      
+      <div class="d-flex justify-content-between">
+        <%= link_to "Cancel", admin_content_path, class: "btn btn-outline-secondary" %>
+        <%= submit_tag "Update About Page", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -52,7 +52,9 @@ Rails.application.routes.draw do
 
     # Content management
     get '/content', to: 'content#index'
-    patch '/content/about', to: 'content#update_about'
-    patch '/content/contact', to: 'content#update_contact'
+    get '/content/edit_about', to: 'content#edit_about'
+    patch '/content/update_about', to: 'content#update_about'
+    get '/content/edit_contact', to: 'content#edit_contact'
+    patch '/content/update_contact', to: 'content#update_contact'
   end
 end

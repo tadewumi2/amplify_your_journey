@@ -1,0 +1,51 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Edit Contact Page</h2>
+  <%= link_to "Preview", contact_path, class: "btn btn-outline-info", target: "_blank" %>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <%= form_with url: admin_content_update_contact_path, method: :patch, local: true, data: { turbo: false } do |f| %>
+      <div class="mb-3">
+        <%= label_tag :title, "Page Title", class: "form-label" %>
+        <%= text_field_tag :title, @content.title, class: "form-control", required: true %>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= label_tag :email, "Email Address", class: "form-label" %>
+            <%= email_field_tag :email, @content.data['email'], class: "form-control", required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= label_tag :phone, "Phone Number", class: "form-label" %>
+            <%= text_field_tag :phone, @content.data['phone'], class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag :address, "Address", class: "form-label" %>
+        <%= text_field_tag :address, @content.data['address'], class: "form-control", required: true %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag :hours, "Business Hours", class: "form-label" %>
+        <%= text_field_tag :hours, @content.data['hours'], class: "form-control" %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag :additional_info, "Additional Information", class: "form-label" %>
+        <%= text_area_tag :additional_info, @content.data['additional_info'], rows: 4, class: "form-control" %>
+        <div class="form-text">Additional text to display on the contact page.</div>
+      </div>
+      
+      <div class="d-flex justify-content-between">
+        <%= link_to "Cancel", admin_content_path, class: "btn btn-outline-secondary" %>
+        <%= submit_tag "Update Contact Page", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

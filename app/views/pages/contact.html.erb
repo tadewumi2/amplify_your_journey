@@ -1,40 +1,124 @@
 <div class="container py-4">
   <div class="row">
-    <div class="col-md-8 mx-auto">
-      <h1>Contact Us</h1>
+    <div class="col-md-10 mx-auto">
+      <h1><%= @content.title %></h1>
 
-      <div class="row">
-        <div class="col-md-6">
-          <h3>Get in Touch</h3>
-          <p>We'd love to hear from you! Whether you're interested in booking a speaking engagement, have questions about our products, or just want to connect, don't hesitate to reach out.</p>
-
-          <div class="mb-3">
-            <h5>Location</h5>
-            <p>Winnipeg, Manitoba, Canada</p>
-          </div>
-
-          <div class="mb-3">
-            <h5>Email</h5>
-            <p><a href="mailto:tosin@riseandresound.com">tosin@riseandresound.com</a></p>
-          </div>
-
-          <div class="mb-3">
-            <h5>Speaking Inquiries</h5>
-            <p>For speaking engagements and workshops, please use our <%= link_to "booking form", new_booking_path %> to provide details about your event.</p>
+      <!-- Business Contact Information - Prominent Display -->
+      <div class="row mb-5">
+        <div class="col-md-4">
+          <div class="card border-primary">
+            <div class="card-body text-center">
+              <div class="text-primary mb-3">
+                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+                </svg>
+              </div>
+              <h5>Email</h5>
+              <p><a href="mailto:<%= @content.data['email'] %>" class="text-decoration-none"><%= @content.data['email'] %></a></p>
+            </div>
           </div>
         </div>
 
+        <div class="col-md-4">
+          <div class="card border-primary">
+            <div class="card-body text-center">
+              <div class="text-primary mb-3">
+                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                </svg>
+              </div>
+              <h5>Location</h5>
+              <p><%= @content.data['address'] %></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card border-primary">
+            <div class="card-body text-center">
+              <div class="text-primary mb-3">
+                <% if @content.data['phone'].present? %>
+                  <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122L9.98 10.98s-.15.115-.394.115c-.295 0-.495-.756-.495-.756L6.94 8.189s-.756-.2-.756-.495c0-.244.115-.394.115-.394L8.45 5.147a.678.678 0 0 0-.122-.58L6.524 2.260z"/>
+                  </svg>
+                <% else %>
+                  <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+                  </svg>
+                <% end %>
+              </div>
+              <% if @content.data['phone'].present? %>
+                <h5>Phone</h5>
+                <p><a href="tel:<%= @content.data['phone'].gsub(/[^\d]/, '') %>" class="text-decoration-none"><%= @content.data['phone'] %></a></p>
+              <% else %>
+                <h5>Business Hours</h5>
+                <p><%= @content.data['hours'] %></p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Info Section -->
+      <% if @content.data['additional_info'].present? %>
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="alert alert-info">
+              <%= simple_format(@content.data['additional_info']) %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Contact Form and Speaking Inquiries -->
+      <div class="row">
         <div class="col-md-6">
-          <h3>Quick Links</h3>
-          <div class="list-group">
-            <%= link_to "Book Speaking Engagement", new_booking_path, class: "list-group-item list-group-item-action" %>
-            <%= link_to "Browse Products", products_path, class: "list-group-item list-group-item-action" %>
-            <%= link_to "About Rise and Resound", about_path, class: "list-group-item list-group-item-action" %>
-            <% if logged_in? %>
-              <%= link_to "My Orders", orders_path, class: "list-group-item list-group-item-action" %>
-            <% else %>
-              <%= link_to "Create Account", signup_path, class: "list-group-item list-group-item-action" %>
-            <% end %>
+          <h3>Send Us a Message</h3>
+          <%= form_with url: contact_path, method: :post, local: true, data: { turbo: false } do |f| %>
+            <div class="mb-3">
+              <%= f.label :name, class: "form-label" %>
+              <%= f.text_field :name, class: "form-control", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :email, class: "form-label" %>
+              <%= f.email_field :email, class: "form-control", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :subject, class: "form-label" %>
+              <%= f.text_field :subject, class: "form-control", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :message, class: "form-label" %>
+              <%= f.text_area :message, rows: 4, class: "form-control", required: true %>
+            </div>
+
+            <%= f.submit "Send Message", class: "btn btn-primary" %>
+          <% end %>
+        </div>
+
+        <div class="col-md-6">
+          <h3>Speaking Engagements</h3>
+          <p>Interested in having Rise and Resound speak at your event? We specialize in:</p>
+          <ul>
+            <li>School assemblies and student programs</li>
+            <li>Corporate workshops and team building</li>
+            <li>Youth development events</li>
+            <li>Conference keynote presentations</li>
+          </ul>
+
+          <div class="d-grid">
+            <%= link_to "Book Speaking Engagement", new_booking_path, class: "btn btn-success btn-lg" %>
+          </div>
+
+          <div class="mt-3">
+            <small class="text-muted">
+              <strong>Business Hours:</strong><br>
+              <%= @content.data['hours'] %>
+            </small>
           </div>
         </div>
       </div>
