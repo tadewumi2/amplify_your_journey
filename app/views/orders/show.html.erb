@@ -1,31 +1,51 @@
 <div class="container py-4">
   <div class="text-center mb-4">
-    <div class="alert alert-success">
-      <h4 class="alert-heading">Order Placed Successfully!</h4>
-      <p>Thank you for your order. We'll send you updates via email.</p>
+    <div class="text-success mb-3">
+      <svg width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+      </svg>
     </div>
+    <h1 class="text-success">Order Confirmed!</h1>
+    <p class="lead">Thank you for your order. We'll send you updates via email.</p>
   </div>
 
-  <div class="row">
-    <div class="col-md-8 mx-auto">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
       <div class="card">
-        <div class="card-header">
-          <h5 class="mb-0">Order #<%= @order.id %></h5>
-          <small class="text-muted">Placed on <%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %></small>
+        <div class="card-header bg-success text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Order #<%= @order.id %></h5>
+            <small>Placed on <%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %></small>
+          </div>
         </div>
         <div class="card-body">
+          <!-- Order Status -->
           <div class="mb-4">
             <h6>Order Status</h6>
-            <span class="badge bg-<%= @order.status == 'pending' ? 'warning' : 'success' %> fs-6">
+            <span class="badge bg-warning fs-6">
               <%= @order.status.titleize %>
             </span>
+            <p class="text-muted mt-2">
+              We're processing your order and will send you tracking information once it ships.
+            </p>
           </div>
 
+          <!-- Customer Information -->
+          <div class="mb-4">
+            <h6>Customer Information</h6>
+            <p class="mb-1"><strong>Name:</strong> <%= @order.user.name %></p>
+            <p class="mb-1"><strong>Email:</strong> <%= @order.user.email %></p>
+            <% if @order.user.address_line_1.present? %>
+              <p class="mb-1"><strong>Shipping:</strong> <%= @order.user.full_address %></p>
+            <% end %>
+          </div>
+
+          <!-- Items Ordered -->
           <div class="mb-4">
             <h6>Items Ordered</h6>
             <div class="table-responsive">
               <table class="table">
-                <thead>
+                <thead class="table-light">
                   <tr>
                     <th>Product</th>
                     <th>Price</th>
@@ -37,32 +57,49 @@
                   <% @order.order_items.each do |item| %>
                     <tr>
                       <td>
-                        <%= link_to item.product.name, product_path(item.product),
-                                    class: "text-decoration-none" %>
-                        <br>
-                        <small class="text-muted"><%= item.product.category.name %></small>
+                        <div class="d-flex align-items-center">
+                          <% if item.product.image.attached? %>
+                            <%= image_tag item.product.image, style: "width: 40px; height: 40px; object-fit: cover;", class: "rounded me-3" %>
+                          <% end %>
+                          <div>
+                            <%= link_to item.product.name, product_path(item.product),
+                                        class: "text-decoration-none fw-bold" %>
+                            <br>
+                            <small class="text-muted"><%= item.product.category.name %></small>
+                          </div>
+                        </div>
                       </td>
                       <td>$<%= item.unit_price %></td>
                       <td><%= item.quantity %></td>
-                      <td>$<%= item.quantity * item.unit_price %></td>
+                      <td class="fw-bold">$<%= item.quantity * item.unit_price %></td>
                     </tr>
                   <% end %>
                 </tbody>
-                <tfoot>
+                <tfoot class="table-light">
                   <tr>
                     <th colspan="3">Total:</th>
-                    <th>$<%= @order.total_price %></th>
+                    <th class="text-primary">$<%= @order.total_price %></th>
                   </tr>
                 </tfoot>
               </table>
             </div>
           </div>
+
+          <!-- Next Steps -->
+          <div class="alert alert-info">
+            <h6 class="alert-heading">What's Next?</h6>
+            <ul class="mb-0">
+              <li>You'll receive an email confirmation shortly</li>
+              <li>We'll send tracking information once your order ships</li>
+              <li>Digital products will be available in your account immediately</li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 text-center">
-        <%= link_to "Continue Shopping", products_path, class: "btn btn-primary" %>
-        <%= link_to "View All Orders", orders_path, class: "btn btn-outline-secondary" %>
+      <div class="text-center mt-4">
+        <%= link_to "Continue Shopping", products_path, class: "btn btn-primary btn-lg me-3" %>
+        <%= link_to "View All Orders", orders_path, class: "btn btn-outline-secondary btn-lg" %>
       </div>
     </div>
   </div>

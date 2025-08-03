@@ -1,17 +1,30 @@
 <div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Home", root_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Cart", cart_path %></li>
+      <li class="breadcrumb-item active">Checkout</li>
+    </ol>
+  </nav>
+
   <h2>Checkout</h2>
 
   <div class="row">
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
-          <h5 class="mb-0">Order Details</h5>
+          <h5 class="mb-0">Complete Your Order</h5>
         </div>
         <div class="card-body">
           <%= form_with model: @order, local: true, data: { turbo: false } do |f| %>
             <!-- Customer Information -->
             <div class="mb-4">
-              <h6>Customer Information</h6>
+              <h6 class="text-primary">
+                <svg width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                </svg>
+                Customer Information
+              </h6>
               <div class="row">
                 <div class="col-md-6">
                   <label class="form-label">Name</label>
@@ -26,91 +39,84 @@
 
             <!-- Shipping Address -->
             <div class="mb-4">
-              <h6>Shipping Address</h6>
+              <h6 class="text-primary">
+                <svg width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                  <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                </svg>
+                Shipping Address
+              </h6>
               <% if current_user.address_line_1.present? %>
-                <div class="alert alert-info">
-                  <strong>Using saved address:</strong><br>
+                <div class="alert alert-success">
+                  <strong>Shipping to:</strong><br>
                   <%= current_user.full_address %>
-                  <div class="mt-2">
-                    <%= link_to "Update Address", "#", class: "btn btn-sm btn-outline-primary",
-                                onclick: "document.getElementById('address-form').style.display='block'; this.style.display='none'; return false;" %>
-                  </div>
+                </div>
+              <% else %>
+                <div class="alert alert-warning">
+                  <strong>No shipping address on file.</strong> For this demo, we'll use a default address.
+                  <br><small>In a real store, you would collect shipping information here.</small>
                 </div>
               <% end %>
-
-              <div id="address-form" style="<%= 'display: none;' if current_user.address_line_1.present? %>">
-                <div class="row">
-                  <div class="col-md-6">
-                    <%= f.label :shipping_address_line_1, "Address Line 1", class: "form-label" %>
-                    <%= f.text_field :shipping_address_line_1, value: current_user.address_line_1,
-                                     class: "form-control", required: true %>
-                  </div>
-                  <div class="col-md-6">
-                    <%= f.label :shipping_address_line_2, "Address Line 2 (Optional)", class: "form-label" %>
-                    <%= f.text_field :shipping_address_line_2, value: current_user.address_line_2,
-                                     class: "form-control" %>
-                  </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="col-md-4">
-                    <%= f.label :shipping_city, "City", class: "form-label" %>
-                    <%= f.text_field :shipping_city, value: current_user.city,
-                                     class: "form-control", required: true %>
-                  </div>
-                  <div class="col-md-4">
-                    <%= f.label :shipping_province, "Province", class: "form-label" %>
-                    <%= f.select :shipping_province,
-                                 options_for_select(User::CANADIAN_PROVINCES.map {|k,v| [v,k]}, current_user.province),
-                                 { prompt: "Select Province" },
-                                 { class: "form-select", required: true } %>
-                  </div>
-                  <div class="col-md-4">
-                    <%= f.label :shipping_postal_code, "Postal Code", class: "form-label" %>
-                    <%= f.text_field :shipping_postal_code, value: current_user.postal_code,
-                                     class: "form-control", required: true %>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <!-- Payment Information -->
             <div class="mb-4">
-              <h6>Payment Information</h6>
+              <h6 class="text-primary">
+                <svg width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                  <path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z"/>
+                  <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1z"/>
+                </svg>
+                Payment Information
+              </h6>
               <div class="alert alert-info">
-                <strong>Demo Mode:</strong> This is a demonstration checkout. No actual payment will be processed.
-                <br><small>In production, this would integrate with Stripe or PayPal.</small>
+                <h6><strong>Demo Mode</strong></h6>
+                <p class="mb-0">This is a demonstration checkout. No actual payment will be processed.</p>
+                <small>In production, this would integrate with Stripe, PayPal, or another payment processor.</small>
               </div>
 
-              <!-- Demo Credit Card Form -->
-              <div class="row">
-                <div class="col-md-8">
-                  <label class="form-label">Card Number</label>
-                  <input type="text" class="form-control" placeholder="4111 1111 1111 1111" readonly>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">CVV</label>
-                  <input type="text" class="form-control" placeholder="123" readonly>
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col-md-6">
-                  <label class="form-label">Expiry Month</label>
-                  <select class="form-select" disabled>
-                    <option>12</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Expiry Year</label>
-                  <select class="form-select" disabled>
-                    <option>2025</option>
-                  </select>
+              <!-- Demo Payment Form -->
+              <div class="card bg-light">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <label class="form-label">Card Number</label>
+                      <input type="text" class="form-control" placeholder="4111 1111 1111 1111" readonly>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">CVV</label>
+                      <input type="text" class="form-control" placeholder="123" readonly>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Expiry Month</label>
+                      <select class="form-select" disabled>
+                        <option>12</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Expiry Year</label>
+                      <select class="form-select" disabled>
+                        <option>2025</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <!-- Terms and Conditions -->
+            <div class="mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label" for="terms">
+                  I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                </label>
+              </div>
+            </div>
+
             <div class="d-flex justify-content-between">
-              <%= link_to "Back to Cart", cart_path, class: "btn btn-outline-secondary" %>
-              <%= f.submit "Place Order", class: "btn btn-success btn-lg" %>
+              <%= link_to "Back to Cart", cart_path, class: "btn btn-outline-secondary btn-lg" %>
+              <%= f.submit "Complete Order", class: "btn btn-success btn-lg px-5" %>
             </div>
           <% end %>
         </div>
@@ -118,42 +124,53 @@
     </div>
 
     <div class="col-md-4">
+      <!-- Order Summary -->
       <div class="card">
         <div class="card-header">
           <h5 class="mb-0">Order Summary</h5>
         </div>
         <div class="card-body">
-          <% subtotal = 0 %>
-          <% current_cart.each do |product_id, quantity| %>
-            <% product = Product.find(product_id) %>
-            <% item_total = quantity * product.current_price %>
-            <% subtotal += item_total %>
-            <div class="d-flex justify-content-between mb-2">
+          <% @cart_items.each do |item| %>
+            <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
               <div>
-                <div class="fw-bold"><%= product.name %></div>
-                <small class="text-muted">Qty: <%= quantity %> × $<%= product.current_price %></small>
+                <div class="fw-bold"><%= item[:product].name %></div>
+                <small class="text-muted">Qty: <%= item[:quantity] %> × $<%= item[:product].current_price %></small>
               </div>
-              <span>$<%= item_total %></span>
+              <span class="fw-bold">$<%= item[:subtotal] %></span>
             </div>
           <% end %>
-          <hr>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal:</span>
-            <span>$<%= subtotal %></span>
+
+          <div class="mt-3">
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal:</span>
+              <span>$<%= @subtotal %></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Tax (13%):</span>
+              <span>$<%= @tax %></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Shipping:</span>
+              <span class="text-success">Free</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <strong class="fs-5">Total:</strong>
+              <strong class="text-primary fs-5">$<%= @total %></strong>
+            </div>
           </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Tax (13%):</span>
-            <span>$<%= (subtotal * 0.13).round(2) %></span>
+        </div>
+      </div>
+
+      <!-- Security Info -->
+      <div class="card mt-3">
+        <div class="card-body text-center">
+          <div class="text-success mb-2">
+            <svg width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>
           </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Shipping:</span>
-            <span>Free</span>
-          </div>
-          <hr>
-          <div class="d-flex justify-content-between">
-            <strong>Total:</strong>
-            <strong class="text-primary">$<%= (subtotal * 1.13).round(2) %></strong>
-          </div>
+          <small class="text-muted">Your information is secure and encrypted</small>
         </div>
       </div>
     </div>
