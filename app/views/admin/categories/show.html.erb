@@ -6,6 +6,14 @@
   </div>
 </div>
 
+<!-- Warning if category has products -->
+<% if @category.products.any? %>
+  <div class="alert alert-warning mb-4">
+    <strong>Warning:</strong> This category contains <%= pluralize(@category.products.count, 'product') %>.
+    You must move or delete all products before you can delete this category.
+  </div>
+<% end %>
+
 <div class="row">
   <div class="col-md-6">
     <div class="card">
@@ -31,10 +39,28 @@
             <td><%= @category.updated_at.strftime("%B %d, %Y") %></td>
           </tr>
         </table>
+
+        <!-- Delete button (only if no products) -->
+        <div class="mt-3">
+          <% if @category.products.any? %>
+            <button class="btn btn-danger" disabled>
+              Cannot Delete (Has Products)
+            </button>
+            <small class="text-muted d-block mt-1">
+              Move or delete all products first
+            </small>
+          <% else %>
+            <%= button_to "Delete Category", admin_category_path(@category),
+                          method: :delete,
+                          class: "btn btn-danger",
+                          confirm: "Are you sure you want to delete '#{@category.name}'? This action cannot be undone.",
+                          data: { turbo: false } %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-6">
     <div class="card">
       <div class="card-header">
@@ -50,7 +76,10 @@
                   <br>
                   <small class="text-muted">Stock: <%= product.stock_quantity %> | Price: $<%= product.current_price %></small>
                 </div>
-                <%= link_to "View", admin_product_path(product), class: "btn btn-sm btn-outline-primary" %>
+                <div class="btn-group btn-group-sm">
+                  <%= link_to "View", admin_product_path(product), class: "btn btn-outline-primary btn-sm" %>
+                  <%= link_to "Edit", edit_admin_product_path(product), class: "btn btn-outline-secondary btn-sm" %>
+                </div>
               </div>
             <% end %>
             <% if @category.products.count > 10 %>
@@ -59,13 +88,27 @@
               </div>
             <% end %>
           </div>
-          
+
           <div class="mt-3">
             <%= link_to "View All Products in #{@category.name}", admin_products_path(category_id: @category.id), class: "btn btn-outline-primary" %>
+          </div>
+
+          <div class="alert alert-info mt-3">
+            <small>
+              <strong>To delete this category:</strong> First move all products to other categories or delete them.
+            </small>
           </div>
         <% else %>
           <p class="text-muted">No products in this category yet.</p>
           <%= link_to "Add Product to this Category", new_admin_product_path(category_id: @category.id), class: "btn btn-primary" %>
+
+          <div class="mt-3">
+            <%= button_to "Delete Empty Category", admin_category_path(@category),
+                          method: :delete,
+                          class: "btn btn-outline-danger",
+                          confirm: "Are you sure you want to delete '#{@category.name}'?",
+                          data: { turbo: false } %>
+          </div>
         <% end %>
       </div>
     </div>

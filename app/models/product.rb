@@ -11,11 +11,20 @@ class Product < ApplicationRecord
 
   scope :available, -> { where('stock_quantity > 0') }
   scope :by_category, ->(category_id) { where(category_id: category_id) if category_id.present? }
-  scope :search, ->(query) { joins(:category).where('products.name ILIKE ? OR products.description ILIKE ? OR categories.name ILIKE ?', "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
+
+  # Fixed search scope for SQLite compatibility
+  scope :search, ->(query) do
+    if query.present?
+      joins(:category).where(
+        'LOWER(products.name) LIKE ? OR LOWER(products.description) LIKE ? OR LOWER(categories.name) LIKE ?',
+        "%#{query.downcase}%", "%#{query.downcase}%", "%#{query.downcase}%"
+      )
+    end
+  end
+
   scope :on_sale, -> { joins(:prices).where('prices.end_date IS NOT NULL') }
   scope :recently_updated, -> { where('updated_at > ?', 7.days.ago) }
   scope :new_products, -> { where('created_at > ?', 30.days.ago) }
-  scope :active, -> { where(active: true) }
 
   def current_price
     prices.where('start_date <= ? AND (end_date IS NULL OR end_date >= ?)', Time.current, Time.current).last&.price || 0
