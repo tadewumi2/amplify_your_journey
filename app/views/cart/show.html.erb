@@ -6,7 +6,7 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">Cart Items</h5>
+            <h5 class="mb-0">Cart Items (<%= @cart_items.count %> items)</h5>
           </div>
           <div class="card-body p-0">
             <div class="table-responsive">
@@ -34,7 +34,10 @@
                                  class="me-3 rounded" alt="<%= item[:product].name %>">
                           <% end %>
                           <div>
-                            <h6 class="mb-0"><%= item[:product].name %></h6>
+                            <h6 class="mb-0">
+                              <%= link_to item[:product].name, product_path(item[:product]),
+                                          class: "text-decoration-none" %>
+                            </h6>
                             <small class="text-muted"><%= item[:product].category.name %></small>
                             <% if item[:product].is_new? %>
                               <span class="badge bg-success">New</span>
@@ -45,7 +48,7 @@
                           </div>
                         </div>
                       </td>
-                      <td>$<%= item[:product].current_price %></td>
+                      <td class="fw-bold">$<%= item[:product].current_price %></td>
                       <td>
                         <%= form_with url: cart_update_path, method: :patch, local: true, class: "d-flex align-items-center" do |f| %>
                           <%= f.hidden_field :product_id, value: item[:product].id %>
@@ -56,12 +59,12 @@
                           <%= f.submit "Update", class: "btn btn-outline-secondary btn-sm" %>
                         <% end %>
                       </td>
-                      <td class="fw-bold">$<%= item[:subtotal] %></td>
+                      <td class="fw-bold text-success">$<%= item[:subtotal] %></td>
                       <td>
                         <%= link_to "Remove", cart_remove_path(product_id: item[:product].id),
                                     method: :delete,
                                     class: "btn btn-outline-danger btn-sm",
-                                    confirm: "Are you sure?",
+                                    confirm: "Remove #{item[:product].name} from cart?",
                                     data: { turbo: false } %>
                       </td>
                     </tr>
@@ -88,12 +91,12 @@
           </div>
           <div class="card-body">
             <div class="d-flex justify-content-between mb-2">
-              <span>Subtotal:</span>
-              <span>$<%= @total %></span>
+              <span>Subtotal (<%= @cart_items.count %> items):</span>
+              <span class="fw-bold">$<%= @total %></span>
             </div>
             <div class="d-flex justify-content-between mb-2">
               <span>Shipping:</span>
-              <span>Free</span>
+              <span class="text-success">Free</span>
             </div>
             <div class="d-flex justify-content-between mb-2">
               <span>Tax (estimated):</span>
@@ -101,29 +104,66 @@
             </div>
             <hr>
             <div class="d-flex justify-content-between mb-3">
-              <strong>Total:</strong>
-              <strong class="text-primary">$<%= (@total * 1.13).round(2) %></strong>
+              <strong class="fs-5">Total:</strong>
+              <strong class="text-primary fs-5">$<%= (@total * 1.13).round(2) %></strong>
             </div>
 
             <% if logged_in? %>
-              <%= link_to "Proceed to Checkout", new_order_path, class: "btn btn-primary w-100" %>
+              <div class="d-grid">
+                <%= link_to "Proceed to Checkout", new_order_path,
+                            class: "btn btn-success btn-lg" %>
+              </div>
+              <small class="text-muted text-center d-block mt-2">
+                <svg width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16">
+                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+                Secure checkout
+              </small>
             <% else %>
-              <p class="text-muted mb-2">Please login to checkout</p>
-              <%= link_to "Login", login_path, class: "btn btn-primary w-100 mb-2" %>
-              <%= link_to "Sign Up", signup_path, class: "btn btn-outline-primary w-100" %>
+              <p class="text-center text-muted mb-3">Please login to checkout</p>
+              <div class="d-grid gap-2">
+                <%= link_to "Login", login_path, class: "btn btn-primary btn-lg" %>
+                <%= link_to "Sign Up", signup_path, class: "btn btn-outline-primary" %>
+              </div>
             <% end %>
+          </div>
+        </div>
+
+        <!-- Trust signals -->
+        <div class="card mt-3">
+          <div class="card-body text-center">
+            <div class="row">
+              <div class="col-4">
+                <svg width="24" height="24" fill="currentColor" class="text-success" viewBox="0 0 16 16">
+                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+                <small class="d-block">Secure</small>
+              </div>
+              <div class="col-4">
+                <svg width="24" height="24" fill="currentColor" class="text-primary" viewBox="0 0 16 16">
+                  <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                </svg>
+                <small class="d-block">Fast Ship</small>
+              </div>
+              <div class="col-4">
+                <svg width="24" height="24" fill="currentColor" class="text-info" viewBox="0 0 16 16">
+                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                </svg>
+                <small class="d-block">Quality</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   <% else %>
     <div class="text-center py-5">
-      <div class="mb-4">
-        <i class="fas fa-shopping-cart fa-4x text-muted"></i>
-      </div>
+      <svg width="64" height="64" fill="currentColor" class="text-muted mb-3" viewBox="0 0 16 16">
+        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </svg>
       <h4>Your cart is empty</h4>
-      <p class="text-muted mb-4">Start shopping to add items to your cart.</p>
-      <%= link_to "Browse Products", products_path, class: "btn btn-primary" %>
+      <p class="text-muted mb-4">Start adding some amazing products to your cart!</p>
+      <%= link_to "Browse Products", products_path, class: "btn btn-primary btn-lg" %>
     </div>
   <% end %>
 </div>
